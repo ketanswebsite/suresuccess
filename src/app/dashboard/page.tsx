@@ -13,6 +13,7 @@ import {
   Flame,
   CheckCircle2,
   XCircle,
+  Info,
 } from "lucide-react";
 
 // Demo data — this will come from Firestore once connected
@@ -60,12 +61,24 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Demo data notice */}
+      <div className="mb-6 flex items-start gap-2.5 rounded-lg bg-navy-50 border border-navy-100 px-4 py-3" role="status">
+        <Info className="w-4 h-4 text-navy-600 mt-0.5 flex-shrink-0" aria-hidden="true" />
+        <p className="text-sm text-navy-800">
+          You&apos;re viewing sample data. Start a{" "}
+          <Link href="/practice" className="font-semibold underline underline-offset-2 hover:text-navy-600">
+            practice session
+          </Link>{" "}
+          to see your real progress here.
+        </p>
+      </div>
+
       {/* Greeting */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-text-primary">
+        <h1 className="text-2xl font-bold text-text-primary truncate">
           Welcome back, {firstName}
         </h1>
-        <p className="text-text-secondary mt-1">Here&apos;s how your exam preparation is going.</p>
+        <p className="text-base text-text-secondary mt-1">Here&apos;s how your exam preparation is going.</p>
       </div>
 
       {/* Stats cards */}
@@ -143,7 +156,7 @@ export default function DashboardPage() {
                         ? "bg-success-50 text-success-600"
                         : mid
                         ? "bg-warning-50 text-warning-700"
-                        : "bg-danger-50 text-danger-600"
+                        : "bg-danger-50 text-danger-700"
                     }`}
                   >
                     {passed ? (

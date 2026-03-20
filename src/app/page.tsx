@@ -119,11 +119,11 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-navy-950">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} aria-hidden="true" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-navy-800 rounded-full blur-[120px] opacity-30 -translate-y-1/2 translate-x-1/4" aria-hidden="true" />
+      <section className="relative overflow-hidden bg-navy-900">
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} aria-hidden="true" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-navy-700 rounded-full blur-[140px] opacity-20 -translate-y-1/2 translate-x-1/4" aria-hidden="true" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-32">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24">
           <div className="text-center max-w-3xl mx-auto slide-up">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-navy-800/60 border border-navy-700 text-navy-200 text-sm font-medium mb-8">
               <Shield className="w-4 h-4 text-gold-400" aria-hidden="true" />
@@ -173,10 +173,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 reveal">
             <div className="section-divider mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-text-primary mb-4">
+            <h2 className="text-3xl font-bold text-text-primary mb-4 leading-tight">
               Covering the UK&apos;s leading exam bodies
             </h2>
-            <p className="text-text-secondary max-w-2xl mx-auto">
+            <p className="text-base text-text-secondary max-w-2xl mx-auto leading-relaxed">
               Comprehensive preparation materials mapped to the latest syllabuses,
               written and reviewed by qualified professionals.
             </p>
@@ -216,10 +216,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 reveal">
             <div className="section-divider mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-text-primary mb-4">
+            <h2 className="text-3xl font-bold text-text-primary mb-4 leading-tight">
               Built to get you exam-ready
             </h2>
-            <p className="text-text-secondary max-w-2xl mx-auto">
+            <p className="text-base text-text-secondary max-w-2xl mx-auto leading-relaxed">
               Every feature exists for one reason — to maximise your chances of
               passing first time.
             </p>
@@ -236,7 +236,7 @@ export default function Home() {
                   <feature.icon className="w-5 h-5 text-navy-600" aria-hidden="true" />
                 </div>
                 <h3 className="text-base font-semibold text-text-primary mb-2">{feature.title}</h3>
-                <p className="text-sm text-text-secondary leading-relaxed">{feature.description}</p>
+                <p className="text-[0.9375rem] text-text-secondary leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -248,7 +248,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 reveal">
             <div className="section-divider mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-text-primary mb-4">
+            <h2 className="text-3xl font-bold text-text-primary mb-4 leading-tight">
               Hear from those who passed
             </h2>
           </div>
@@ -265,7 +265,7 @@ export default function Home() {
                     <Star key={j} className="w-4 h-4 text-gold-500 fill-gold-500" aria-hidden="true" />
                   ))}
                 </div>
-                <p className="text-sm text-text-secondary mb-5 leading-relaxed">
+                <p className="text-[0.9375rem] text-text-secondary mb-5 leading-relaxed">
                   &ldquo;{review.text}&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
@@ -288,7 +288,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 reveal">
             <div className="section-divider mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-text-primary mb-4">
+            <h2 className="text-3xl font-bold text-text-primary mb-4 leading-tight">
               Three steps to exam success
             </h2>
           </div>
@@ -304,7 +304,7 @@ export default function Home() {
                   <span className="text-sm font-bold text-gold-700">{item.step}</span>
                 </div>
                 <h3 className="text-base font-semibold text-text-primary mb-2">{item.title}</h3>
-                <p className="text-sm text-text-secondary leading-relaxed">{item.desc}</p>
+                <p className="text-[0.9375rem] text-text-secondary leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -312,8 +312,8 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-navy-950 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} aria-hidden="true" />
+      <section className="py-20 bg-navy-900 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} aria-hidden="true" />
         <div className="relative max-w-3xl mx-auto px-4 text-center reveal">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
             Your exam date is set. Are you ready?

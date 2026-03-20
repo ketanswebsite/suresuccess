@@ -11,8 +11,12 @@ import {
   updateDoc,
   serverTimestamp,
   Timestamp,
+  getFirestore,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import app from "./firebase";
+
+// Lazy-initialized: Firestore SDK only loads when this module is first imported
+const db = getFirestore(app);
 
 // ─── Types matching your existing Firestore schema ───
 

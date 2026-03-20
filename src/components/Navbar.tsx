@@ -164,7 +164,7 @@ export default function Navbar() {
                     <div className="w-8 h-8 rounded-full bg-navy-800 flex items-center justify-center text-gold-400 text-xs font-bold" aria-hidden="true">
                       {user.displayName?.charAt(0) || user.email?.charAt(0) || "U"}
                     </div>
-                    <span className="hidden lg:block text-text-primary font-medium">
+                    <span className="hidden lg:block text-text-primary font-medium max-w-[120px] truncate">
                       {user.displayName || "Account"}
                     </span>
                     <ChevronDown className={`w-3.5 h-3.5 text-text-tertiary transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} aria-hidden="true" />
@@ -173,7 +173,7 @@ export default function Navbar() {
                   {profileOpen && (
                     <div ref={profileMenuRef} className="absolute right-0 mt-2 w-52 rounded-xl bg-white shadow-lg border border-border py-1 fade-in" role="menu" aria-label="Account menu">
                       <div className="px-4 py-3 border-b border-border-light">
-                        <p className="text-sm font-semibold text-text-primary">{user.displayName}</p>
+                        <p className="text-sm font-semibold text-text-primary truncate">{user.displayName}</p>
                         <p className="text-xs text-text-tertiary truncate mt-0.5">{user.email}</p>
                       </div>
                       <button

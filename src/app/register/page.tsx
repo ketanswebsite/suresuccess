@@ -16,6 +16,10 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const router = useRouter();
 
+  const clearError = () => {
+    if (error) setError("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -27,7 +31,7 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      await register(email, password, name);
+      await register(email.trim(), password, name.trim());
       router.push("/dashboard");
     } catch (err: unknown) {
       const code = (err as { code?: string }).code;
@@ -49,13 +53,13 @@ export default function RegisterPage() {
             <GraduationCap className="w-7 h-7 text-gold-400" aria-hidden="true" />
           </div>
           <h1 className="text-2xl font-bold text-text-primary">Create your account</h1>
-          <p className="text-text-secondary mt-1">Start preparing for your exam today</p>
+          <p className="text-base text-text-secondary mt-1">Start preparing for your exam today</p>
         </div>
 
         <div className="card p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div role="alert" aria-live="assertive" className="bg-danger-50 text-danger-600 text-sm px-4 py-3 rounded-lg border border-danger-500/20">
+              <div role="alert" aria-live="assertive" className="bg-danger-50 text-danger-700 text-sm px-4 py-3 rounded-lg border border-danger-500/20">
                 {error}
               </div>
             )}
@@ -65,16 +69,18 @@ export default function RegisterPage() {
                 Full name
               </label>
               <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
                 <input
                   id="register-name"
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="input pl-10"
+                  onChange={(e) => { setName(e.target.value); clearError(); }}
+                  className="input pl-11 pr-3.5"
                   placeholder="Your full name"
                   required
+                  maxLength={100}
                   autoComplete="name"
+                  enterKeyHint="next"
                 />
               </div>
             </div>
@@ -84,16 +90,18 @@ export default function RegisterPage() {
                 Email address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
                 <input
                   id="register-email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input pl-10"
+                  onChange={(e) => { setEmail(e.target.value); clearError(); }}
+                  className="input pl-11 pr-3.5"
                   placeholder="you@example.com"
                   required
+                  maxLength={254}
                   autoComplete="email"
+                  enterKeyHint="next"
                 />
               </div>
             </div>
@@ -103,21 +111,23 @@ export default function RegisterPage() {
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
                 <input
                   id="register-password"
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input pl-10 pr-10"
+                  onChange={(e) => { setPassword(e.target.value); clearError(); }}
+                  className="input pl-11 pr-12"
                   placeholder="At least 6 characters"
                   required
+                  maxLength={128}
                   autoComplete="new-password"
+                  enterKeyHint="done"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary transition-colors p-0.5"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary transition-colors p-2 rounded-md"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}

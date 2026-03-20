@@ -254,7 +254,7 @@ export default function PracticePage() {
                   className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold ${
                     correct
                       ? "bg-success-50 text-success-600"
-                      : "bg-danger-50 text-danger-600"
+                      : "bg-danger-50 text-danger-700"
                   }`}
                   aria-label={`Question ${i + 1}: ${correct ? "correct" : "incorrect"}`}
                 >
@@ -368,7 +368,7 @@ export default function PracticePage() {
               if (isCorrect) {
                 classes += "border-success-500 bg-success-50 text-success-600";
               } else if (isWrong) {
-                classes += "border-danger-500 bg-danger-50 text-danger-600";
+                classes += "border-danger-500 bg-danger-50 text-danger-700";
               } else {
                 classes += "border-border text-text-tertiary";
               }

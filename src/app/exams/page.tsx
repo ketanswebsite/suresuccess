@@ -103,8 +103,8 @@ export default function ExamsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-10">
         <div className="section-divider mb-4" />
-        <h1 className="text-3xl font-bold text-text-primary mb-2">Exam modules</h1>
-        <p className="text-text-secondary">
+        <h1 className="text-3xl font-bold text-text-primary mb-2 leading-tight">Exam modules</h1>
+        <p className="text-base text-text-secondary leading-relaxed">
           Choose your exam to start practising. All question banks are updated for 2026 syllabuses.
         </p>
       </div>
@@ -112,14 +112,14 @@ export default function ExamsPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by exam name or code\u2026"
             aria-label="Search exams by name or code"
-            className="input pl-10"
+            className="input pl-11 pr-3.5"
           />
         </div>
         <div className="flex gap-2" role="group" aria-label="Filter by exam body">
