@@ -103,6 +103,57 @@ export interface UserProfile {
   lastLogin: Timestamp;
 }
 
+// ─── Gamification Types ───
+
+export interface UserGamification {
+  id: string;
+  userId: string;
+  totalXP: number;
+  level: number;
+  currentStreak: number;
+  longestStreak: number;
+  lastStudyDate: string; // ISO date string YYYY-MM-DD
+  totalCorrect: number;
+  totalAnswered: number;
+  totalQuizzesCompleted: number;
+  perfectQuizzes: number;
+  fastAnswers: number;
+  earnedBadges: string[];
+  categoryStats: Record<string, { answered: number; correct: number }>;
+  updatedAt: Timestamp;
+}
+
+export interface BadgeDefinition {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  conditionType: "streak" | "correct" | "quizzes" | "perfect" | "speed" | "mastery";
+  conditionValue: number;
+  examBody?: string; // if mastery badge, which exam body
+}
+
+export interface LeaderboardEntry {
+  userId: string;
+  displayName: string;
+  totalXP: number;
+  level: number;
+  currentStreak: number;
+}
+
+// ─── Admin Question Management Types ───
+
+export interface QuestionDraft {
+  moduleId: string;
+  chapterId: string;
+  topicId: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+  difficulty: string;
+}
+
 // ─── Data fetching functions ───
 
 export async function getModules(): Promise<Module[]> {
@@ -261,4 +312,97 @@ export async function logUserActivity(userId: string, action: string, details?: 
     details: details || {},
     createdAt: serverTimestamp(),
   });
+}
+
+// ─── Gamification functions ───
+
+export async function getUserGamification(userId: string): Promise<UserGamification | null> {
+  const snapshot = await getDocs(
+    query(collection(db, "userGamification"), where("userId", "==", userId), limit(1))
+  );
+  if (snapshot.empty) return null;
+  return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as UserGamification;
+}
+
+export async function upsertUserGamification(
+  userId: string,
+  data: Partial<Omit<UserGamification, "id" | "userId">>
+) {
+  const snapshot = await getDocs(
+    query(collection(db, "userGamification"), where("userId", "==", userId), limit(1))
+  );
+  if (snapshot.empty) {
+    return addDoc(collection(db, "userGamification"), {
+      userId,
+      totalXP: 0,
+      level: 1,
+      currentStreak: 0,
+      longestStreak: 0,
+      lastStudyDate: "",
+      totalCorrect: 0,
+      totalAnswered: 0,
+      totalQuizzesCompleted: 0,
+      perfectQuizzes: 0,
+      fastAnswers: 0,
+      earnedBadges: [],
+      categoryStats: {},
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
+  } else {
+    return updateDoc(doc(db, "userGamification", snapshot.docs[0].id), {
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
+  }
+}
+
+export async function getLeaderboard(limitCount = 20): Promise<LeaderboardEntry[]> {
+  const snapshot = await getDocs(
+    query(collection(db, "userGamification"), orderBy("totalXP", "desc"), limit(limitCount))
+  );
+  return snapshot.docs.map((d) => {
+    const data = d.data();
+    return {
+      userId: data.userId,
+      displayName: data.displayName || "Anonymous",
+      totalXP: data.totalXP || 0,
+      level: data.level || 1,
+      currentStreak: data.currentStreak || 0,
+    };
+  });
+}
+
+// ─── Admin: Question CRUD ───
+
+export async function addQuestion(data: QuestionDraft): Promise<string> {
+  const docRef = await addDoc(collection(db, "questions"), {
+    ...data,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
+export async function updateQuestion(questionId: string, data: Partial<QuestionDraft>) {
+  return updateDoc(doc(db, "questions"), {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function deleteQuestion(questionId: string) {
+  const { deleteDoc: firestoreDelete } = await import("firebase/firestore");
+  return firestoreDelete(doc(db, "questions", questionId));
+}
+
+export async function getAllQuestions(
+  filters?: { moduleId?: string; chapterId?: string; difficulty?: string },
+  maxResults = 200
+): Promise<Question[]> {
+  let q = query(collection(db, "questions"), limit(maxResults));
+  if (filters?.moduleId) q = query(q, where("moduleId", "==", filters.moduleId));
+  if (filters?.chapterId) q = query(q, where("chapterId", "==", filters.chapterId));
+  if (filters?.difficulty) q = query(q, where("difficulty", "==", filters.difficulty));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Question));
 }

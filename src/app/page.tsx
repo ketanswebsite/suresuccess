@@ -189,9 +189,13 @@ export default function Home() {
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
               Pass your financial exams{" "}
-              <span className="text-gold-400">
-                {typedText}
-                <span className="typing-cursor" aria-hidden="true" />
+              <span className="inline-grid text-gold-400">
+                {/* Invisible longest phrase reserves the width/height */}
+                <span className="invisible col-start-1 row-start-1" aria-hidden="true">with confidence</span>
+                <span className="col-start-1 row-start-1">
+                  {typedText}
+                  <span className="typing-cursor" aria-hidden="true" />
+                </span>
               </span>
               <span className="sr-only">with confidence, first time, stress-free, on your terms</span>
             </h1>

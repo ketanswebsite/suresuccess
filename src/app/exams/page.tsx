@@ -1,89 +1,114 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Clock, FileText, Search } from "lucide-react";
+import { BookOpen, Clock, FileText, Search, Lock } from "lucide-react";
 import { useState } from "react";
+import { CHAPTER_CONFIG, getQuestionsByModule } from "@/lib/question-bank";
 
-const exams = [
-  {
-    id: "cisi-ioc",
-    body: "CISI",
-    name: "Introduction to Securities & Investment (IOC)",
-    code: "IOC",
-    questions: 450,
-    duration: "60 mins",
-    topics: 8,
-    difficulty: "Foundation",
-  },
+// Build exam list from real data
+const icwimQuestions = getQuestionsByModule("cisi-icwim");
+const icwimChapters = Object.entries(CHAPTER_CONFIG).filter(
+  ([, cfg]) => cfg.moduleId === "cisi-icwim"
+);
+
+const exams: {
+  id: string;
+  body: string;
+  name: string;
+  code: string;
+  questions: number;
+  duration: string;
+  chapters: number;
+  difficulty: string;
+  available: boolean;
+}[] = [
   {
     id: "cisi-icwim",
     body: "CISI",
     name: "Investment, Risk & Taxation (ICWIM)",
     code: "ICWIM",
-    questions: 380,
+    questions: icwimQuestions.length,
     duration: "120 mins",
-    topics: 10,
+    chapters: icwimChapters.length,
     difficulty: "Intermediate",
+    available: true,
+  },
+  {
+    id: "cisi-ioc",
+    body: "CISI",
+    name: "Introduction to Securities & Investment (IOC)",
+    code: "IOC",
+    questions: 0,
+    duration: "60 mins",
+    chapters: 0,
+    difficulty: "Foundation",
+    available: false,
   },
   {
     id: "cisi-iad",
     body: "CISI",
     name: "Investment Advice Diploma (IAD)",
     code: "IAD",
-    questions: 520,
+    questions: 0,
     duration: "120 mins",
-    topics: 12,
+    chapters: 0,
     difficulty: "Advanced",
+    available: false,
   },
   {
     id: "cii-r01",
     body: "CII",
     name: "Financial Services, Regulation & Ethics",
     code: "R01",
-    questions: 400,
+    questions: 0,
     duration: "60 mins",
-    topics: 7,
+    chapters: 0,
     difficulty: "Foundation",
+    available: false,
   },
   {
     id: "cii-r02",
     body: "CII",
     name: "Investment Principles & Risk",
     code: "R02",
-    questions: 350,
+    questions: 0,
     duration: "60 mins",
-    topics: 8,
+    chapters: 0,
     difficulty: "Foundation",
+    available: false,
   },
   {
     id: "cii-r05",
     body: "CII",
     name: "Financial Protection",
     code: "R05",
-    questions: 320,
+    questions: 0,
     duration: "60 mins",
-    topics: 6,
+    chapters: 0,
     difficulty: "Foundation",
+    available: false,
   },
   {
     id: "cii-af1",
     body: "CII",
     name: "Personal Tax & Trust Planning",
     code: "AF1",
-    questions: 280,
+    questions: 0,
     duration: "180 mins",
-    topics: 9,
+    chapters: 0,
     difficulty: "Advanced",
+    available: false,
   },
   {
     id: "cii-af5",
     body: "CII",
     name: "Financial Planning Process",
     code: "AF5",
-    questions: 300,
+    questions: 0,
     duration: "180 mins",
-    topics: 8,
+    chapters: 0,
     difficulty: "Advanced",
+    available: false,
   },
 ];
 
@@ -105,7 +130,7 @@ export default function ExamsPage() {
         <div className="section-divider mb-4" />
         <h1 className="text-3xl font-bold text-text-primary mb-2 leading-tight">Exam modules</h1>
         <p className="text-base text-text-secondary leading-relaxed">
-          Choose your exam to start practising. All question banks are updated for 2026 syllabuses.
+          Choose your exam to start practising. More modules coming soon.
         </p>
       </div>
 
@@ -117,7 +142,7 @@ export default function ExamsPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by exam name or code\u2026"
+            placeholder="Search by exam name or code&hellip;"
             aria-label="Search exams by name or code"
             className="input pl-11 pr-3.5"
           />
@@ -142,48 +167,76 @@ export default function ExamsPage() {
 
       {/* Exam grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filtered.map((exam) => (
-          <Link
-            key={exam.id}
-            href={`/practice?exam=${exam.id}`}
-            className="card-interactive overflow-hidden block group"
-          >
-            <div className={`h-1 ${exam.body === "CISI" ? "bg-navy-500" : "bg-gold-500"}`} />
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <span
-                  className={`badge ${
-                    exam.body === "CISI" ? "badge-navy" : "badge-gold"
-                  }`}
-                >
-                  {exam.body}
-                </span>
-                <span className="badge bg-surface-sunken text-text-secondary">
-                  {exam.difficulty}
+        {filtered.map((exam) =>
+          exam.available ? (
+            <Link
+              key={exam.id}
+              href={`/practice?exam=${exam.id}`}
+              className="card-interactive overflow-hidden block group"
+            >
+              <div className={`h-1 ${exam.body === "CISI" ? "bg-navy-500" : "bg-gold-500"}`} />
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className={`badge ${exam.body === "CISI" ? "badge-navy" : "badge-gold"}`}>
+                    {exam.body}
+                  </span>
+                  <span className="badge bg-surface-sunken text-text-secondary">
+                    {exam.difficulty}
+                  </span>
+                </div>
+
+                <h3 className="font-bold text-text-primary mb-1 text-lg">{exam.code}</h3>
+                <p className="text-sm text-text-secondary mb-4 leading-relaxed">{exam.name}</p>
+
+                <div className="flex gap-4 text-xs text-text-tertiary mb-5">
+                  <span className="flex items-center gap-1">
+                    <FileText className="w-3.5 h-3.5" aria-hidden="true" /> {exam.questions} questions
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" aria-hidden="true" /> {exam.duration}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <BookOpen className="w-3.5 h-3.5" aria-hidden="true" /> {exam.chapters} chapters
+                  </span>
+                </div>
+
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-600 group-hover:text-navy-800 transition-colors">
+                  Start practising <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">&rarr;</span>
                 </span>
               </div>
+            </Link>
+          ) : (
+            <div
+              key={exam.id}
+              className="card overflow-hidden opacity-60"
+            >
+              <div className={`h-1 ${exam.body === "CISI" ? "bg-navy-300" : "bg-gold-300"}`} />
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className={`badge ${exam.body === "CISI" ? "badge-navy" : "badge-gold"}`}>
+                    {exam.body}
+                  </span>
+                  <span className="badge bg-surface-sunken text-text-secondary">
+                    {exam.difficulty}
+                  </span>
+                </div>
 
-              <h3 className="font-bold text-text-primary mb-1 text-lg">{exam.code}</h3>
-              <p className="text-sm text-text-secondary mb-4 leading-relaxed">{exam.name}</p>
+                <h3 className="font-bold text-text-primary mb-1 text-lg">{exam.code}</h3>
+                <p className="text-sm text-text-secondary mb-4 leading-relaxed">{exam.name}</p>
 
-              <div className="flex gap-4 text-xs text-text-tertiary mb-5">
-                <span className="flex items-center gap-1">
-                  <FileText className="w-3.5 h-3.5" aria-hidden="true" /> {exam.questions} questions
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5" aria-hidden="true" /> {exam.duration}
-                </span>
-                <span className="flex items-center gap-1">
-                  <BookOpen className="w-3.5 h-3.5" aria-hidden="true" /> {exam.topics} topics
+                <div className="flex gap-4 text-xs text-text-tertiary mb-5">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" aria-hidden="true" /> {exam.duration}
+                  </span>
+                </div>
+
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-text-tertiary">
+                  <Lock className="w-3.5 h-3.5" aria-hidden="true" /> Coming soon
                 </span>
               </div>
-
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-600 group-hover:text-navy-800 transition-colors">
-                Start practising <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">&rarr;</span>
-              </span>
             </div>
-          </Link>
-        ))}
+          )
+        )}
       </div>
 
       {filtered.length === 0 && (

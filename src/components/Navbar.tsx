@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
+import { isAdmin } from "@/lib/admin";
 import {
   BookOpen,
   LayoutDashboard,
@@ -12,6 +13,9 @@ import {
   GraduationCap,
   ChevronDown,
   PenTool,
+  Trophy,
+  Medal,
+  Settings,
 } from "lucide-react";
 
 function useFocusTrap(active: boolean, containerRef: React.RefObject<HTMLElement | null>) {
@@ -151,6 +155,12 @@ export default function Navbar() {
                 <NavLink href="/practice" icon={<PenTool className="w-4 h-4" aria-hidden="true" />}>
                   Practice
                 </NavLink>
+                <NavLink href="/badges" icon={<Trophy className="w-4 h-4" aria-hidden="true" />}>
+                  Badges
+                </NavLink>
+                <NavLink href="/leaderboard" icon={<Medal className="w-4 h-4" aria-hidden="true" />}>
+                  Leaderboard
+                </NavLink>
 
                 {/* Profile dropdown */}
                 <div className="relative ml-3" ref={profileRef}>
@@ -176,6 +186,17 @@ export default function Navbar() {
                         <p className="text-sm font-semibold text-text-primary truncate">{user.displayName}</p>
                         <p className="text-xs text-text-tertiary truncate mt-0.5">{user.email}</p>
                       </div>
+                      {isAdmin(user.email) && (
+                        <Link
+                          href="/manage"
+                          onClick={() => setProfileOpen(false)}
+                          role="menuitem"
+                          tabIndex={0}
+                          className="w-full text-left px-4 py-2.5 text-sm text-text-secondary hover:bg-surface-sunken flex items-center gap-2 transition-colors"
+                        >
+                          <Settings className="w-4 h-4" aria-hidden="true" /> Manage Questions
+                        </Link>
+                      )}
                       <button
                         onClick={() => { logout(); setProfileOpen(false); }}
                         role="menuitem"
@@ -237,6 +258,17 @@ export default function Navbar() {
                 <MobileNavLink href="/practice" onClick={() => setMobileOpen(false)}>
                   Practice
                 </MobileNavLink>
+                <MobileNavLink href="/badges" onClick={() => setMobileOpen(false)}>
+                  Badges
+                </MobileNavLink>
+                <MobileNavLink href="/leaderboard" onClick={() => setMobileOpen(false)}>
+                  Leaderboard
+                </MobileNavLink>
+                {isAdmin(user.email) && (
+                  <MobileNavLink href="/manage" onClick={() => setMobileOpen(false)}>
+                    Manage Questions
+                  </MobileNavLink>
+                )}
                 <div className="pt-2 mt-2 border-t border-border-light">
                   <button
                     onClick={() => { logout(); setMobileOpen(false); }}
