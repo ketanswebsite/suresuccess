@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -97,19 +97,26 @@ export default function PracticePage() {
   const [finished, setFinished] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
 
-  // Timer — pauses when tab is hidden
+  // Timer — pauses when tab is hidden (uses ref to avoid closure issues)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   useEffect(() => {
     if (finished) return;
 
-    let interval: ReturnType<typeof setInterval>;
-
     const startTimer = () => {
-      interval = setInterval(() => setTimeElapsed((t) => t + 1), 1000);
+      timerRef.current = setInterval(() => setTimeElapsed((t) => t + 1), 1000);
+    };
+
+    const stopTimer = () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     };
 
     const handleVisibility = () => {
       if (document.hidden) {
-        clearInterval(interval);
+        stopTimer();
       } else {
         startTimer();
       }
@@ -119,7 +126,7 @@ export default function PracticePage() {
     document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
-      clearInterval(interval);
+      stopTimer();
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [finished]);
@@ -130,9 +137,12 @@ export default function PracticePage() {
     }
   }, [user, loading, router]);
 
-  // Keyboard navigation
+  // Keyboard navigation — only when no input/textarea is focused
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (finished) return;
+    const tag = (e.target as HTMLElement).tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
     if (e.key === "ArrowRight" && currentQ < sampleQuestions.length - 1) {
       setCurrentQ((q) => q + 1);
       setSelected(answers[currentQ + 1]);
@@ -221,7 +231,7 @@ export default function PracticePage() {
             {passed ? (
               <Trophy className="w-10 h-10 text-gold-500" aria-hidden="true" />
             ) : (
-              <RotateCcw className="w-10 h-10 text-warning-600" aria-hidden="true" />
+              <RotateCcw className="w-10 h-10 text-warning-700" aria-hidden="true" />
             )}
           </div>
 
@@ -288,6 +298,11 @@ export default function PracticePage() {
   // Quiz Screen
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      {/* Screen reader announcement for question navigation */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        Question {currentQ + 1} of {sampleQuestions.length}: {question.topic}
+      </div>
+
       {/* Header bar */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -306,7 +321,7 @@ export default function PracticePage() {
             onClick={toggleFlag}
             className={`p-2.5 rounded-lg transition-colors ${
               flagged.has(currentQ)
-                ? "bg-warning-50 text-warning-600"
+                ? "bg-warning-50 text-warning-700"
                 : "text-text-tertiary hover:bg-surface-sunken"
             }`}
             aria-label={flagged.has(currentQ) ? "Unflag this question" : "Flag for review"}

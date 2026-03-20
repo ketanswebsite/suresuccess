@@ -14,11 +14,48 @@ import {
   PenTool,
 } from "lucide-react";
 
+function useFocusTrap(active: boolean, containerRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    if (!active || !containerRef.current) return;
+
+    const container = containerRef.current;
+    const focusable = container.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    function handleTab(e: KeyboardEvent) {
+      if (e.key !== "Tab") return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    container.addEventListener("keydown", handleTab);
+    first.focus();
+
+    return () => container.removeEventListener("keydown", handleTab);
+  }, [active, containerRef]);
+}
+
 export default function Navbar() {
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+  const profileButtonRef = useRef<HTMLButtonElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   // Close profile dropdown on outside click
@@ -32,11 +69,16 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // Close dropdowns on Escape
+  // Close dropdowns on Escape and return focus
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") {
-      if (profileOpen) setProfileOpen(false);
-      if (mobileOpen) setMobileOpen(false);
+      if (profileOpen) {
+        setProfileOpen(false);
+        profileButtonRef.current?.focus();
+      }
+      if (mobileOpen) {
+        setMobileOpen(false);
+      }
     }
   }, [profileOpen, mobileOpen]);
 
@@ -50,6 +92,37 @@ export default function Navbar() {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
+
+  // Arrow key navigation in profile dropdown
+  useEffect(() => {
+    if (!profileOpen || !profileMenuRef.current) return;
+
+    const menu = profileMenuRef.current;
+    const items = menu.querySelectorAll<HTMLElement>('[role="menuitem"]');
+    if (items.length === 0) return;
+
+    function handleArrows(e: KeyboardEvent) {
+      const currentIndex = Array.from(items).indexOf(document.activeElement as HTMLElement);
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const next = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+        items[next].focus();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const prev = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+        items[prev].focus();
+      }
+    }
+
+    menu.addEventListener("keydown", handleArrows);
+    // Focus first menu item on open
+    items[0].focus();
+
+    return () => menu.removeEventListener("keydown", handleArrows);
+  }, [profileOpen]);
+
+  // Focus trap for mobile menu
+  useFocusTrap(mobileOpen, mobileMenuRef);
 
   return (
     <nav className="glass-nav sticky top-0 z-50" aria-label="Main navigation">
@@ -82,6 +155,7 @@ export default function Navbar() {
                 {/* Profile dropdown */}
                 <div className="relative ml-3" ref={profileRef}>
                   <button
+                    ref={profileButtonRef}
                     onClick={() => setProfileOpen(!profileOpen)}
                     aria-expanded={profileOpen}
                     aria-haspopup="true"
@@ -97,7 +171,7 @@ export default function Navbar() {
                   </button>
 
                   {profileOpen && (
-                    <div className="absolute right-0 mt-2 w-52 rounded-xl bg-white shadow-lg border border-border py-1 fade-in" role="menu" aria-label="Account menu">
+                    <div ref={profileMenuRef} className="absolute right-0 mt-2 w-52 rounded-xl bg-white shadow-lg border border-border py-1 fade-in" role="menu" aria-label="Account menu">
                       <div className="px-4 py-3 border-b border-border-light">
                         <p className="text-sm font-semibold text-text-primary">{user.displayName}</p>
                         <p className="text-xs text-text-tertiary truncate mt-0.5">{user.email}</p>
@@ -105,6 +179,7 @@ export default function Navbar() {
                       <button
                         onClick={() => { logout(); setProfileOpen(false); }}
                         role="menuitem"
+                        tabIndex={0}
                         className="w-full text-left px-4 py-2.5 text-sm text-danger-600 hover:bg-danger-50 flex items-center gap-2 transition-colors"
                       >
                         <LogOut className="w-4 h-4" aria-hidden="true" /> Sign out

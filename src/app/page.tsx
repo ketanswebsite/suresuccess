@@ -29,7 +29,7 @@ const examBodies = [
     exams: "R01, R02, R05, AF1, AF5 & more",
     badge: "badge-gold",
     accent: "bg-gold-50 border-gold-100",
-    icon: "text-gold-600",
+    icon: "text-gold-700",
   },
 ];
 
@@ -91,6 +91,9 @@ const testimonials = [
 export default function Home() {
   // Scroll-triggered reveal animation
   useEffect(() => {
+    // Mark document as JS-ready so reveal animations activate
+    document.documentElement.classList.add("js-ready");
+
     const reveals = document.querySelectorAll(".reveal, .reveal-stagger");
     if (!reveals.length) return;
 
@@ -107,7 +110,10 @@ export default function Home() {
     );
 
     reveals.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove("js-ready");
+    };
   }, []);
 
   return (
@@ -295,7 +301,7 @@ export default function Home() {
             ].map((item, i) => (
               <div key={item.step} className="text-center reveal-stagger" style={{ "--stagger-index": i } as React.CSSProperties}>
                 <div className="w-12 h-12 rounded-full bg-gold-50 border border-gold-200 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-sm font-bold text-gold-600">{item.step}</span>
+                  <span className="text-sm font-bold text-gold-700">{item.step}</span>
                 </div>
                 <h3 className="text-base font-semibold text-text-primary mb-2">{item.title}</h3>
                 <p className="text-sm text-text-secondary leading-relaxed">{item.desc}</p>

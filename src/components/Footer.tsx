@@ -36,9 +36,9 @@ export default function Footer() {
               Company
             </h3>
             <ul className="space-y-2.5 text-sm">
-              <li><span className="text-navy-500 cursor-default">Contact Support</span></li>
-              <li><span className="text-navy-500 cursor-default">Privacy Policy</span></li>
-              <li><span className="text-navy-500 cursor-default">Terms of Service</span></li>
+              <li><a href="mailto:support@suresuccess.co.uk" className="hover:text-white transition-colors">Contact Support</a></li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
         </div>

@@ -19,6 +19,8 @@
   --color-navy-100: #dce9f7;
   --color-navy-50: #eef4fb;
 
+  --color-gold-800: #5c4308;
+  --color-gold-700: #7a5b10;
   --color-gold-600: #b8860b;
   --color-gold-500: #d4a017;
   --color-gold-400: #e8b930;
@@ -31,9 +33,11 @@
   --color-success-600: #0d7c4a;
   --color-success-500: #10b981;
   --color-success-50: #ecfdf5;
+  --color-danger-700: #b91c1c;
   --color-danger-600: #dc2626;
   --color-danger-500: #ef4444;
   --color-danger-50: #fef2f2;
+  --color-warning-700: #b45309;
   --color-warning-600: #d97706;
   --color-warning-500: #f59e0b;
   --color-warning-50: #fffbeb;
@@ -149,27 +153,27 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Scroll-triggered reveal */
-.reveal {
+/* Scroll-triggered reveal — visible by default, hidden only when JS is active */
+.js-ready .reveal {
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.reveal.visible {
+.js-ready .reveal.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
 /* Stagger children (set --stagger-index via style) */
-.reveal-stagger {
+.js-ready .reveal-stagger {
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: calc(var(--stagger-index, 0) * 80ms);
 }
-.reveal-stagger.visible {
+.js-ready .reveal-stagger.visible {
   opacity: 1;
   transform: translateY(0);
 }
@@ -201,7 +205,7 @@ body {
 .btn-primary {
   background: var(--color-navy-800);
   color: white;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 1px 3px rgba(10, 22, 40, 0.2);
 }
 .btn-primary:hover {
@@ -219,7 +223,7 @@ body {
   background: white;
   color: var(--color-navy-800);
   border: 1px solid var(--color-border);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-secondary:hover {
   background: var(--color-navy-50);
@@ -231,7 +235,7 @@ body {
   background: var(--color-gold-500);
   color: var(--color-navy-950);
   font-weight: 600;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 1px 3px rgba(212, 160, 23, 0.3);
 }
 .btn-accent:hover {
@@ -251,7 +255,7 @@ body {
   background: white;
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .card-interactive:hover {
   border-color: var(--color-navy-200);
@@ -278,10 +282,10 @@ body {
   letter-spacing: 0.02em;
 }
 .badge-navy { background: var(--color-navy-50); color: var(--color-navy-700); }
-.badge-gold { background: var(--color-gold-50); color: var(--color-gold-600); }
+.badge-gold { background: var(--color-gold-50); color: var(--color-gold-700); }
 .badge-success { background: var(--color-success-50); color: var(--color-success-600); }
 .badge-danger { background: var(--color-danger-50); color: var(--color-danger-600); }
-.badge-warning { background: var(--color-warning-50); color: var(--color-warning-600); }
+.badge-warning { background: var(--color-warning-50); color: var(--color-warning-700); }
 
 /* — Input — */
 .input {
@@ -295,7 +299,8 @@ body {
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .input:focus {
-  outline: none;
+  outline: 2px solid transparent; /* Visible in Windows High Contrast Mode */
+  outline-offset: 2px;
   border-color: var(--color-navy-400);
   box-shadow: 0 0 0 3px rgba(90, 143, 212, 0.15);
 }
@@ -320,7 +325,7 @@ body {
 
 /* — Stat Highlight — */
 .stat-accent {
-  color: var(--color-gold-500);
+  color: var(--color-gold-700);
 }
 
 /* — Section divider — */

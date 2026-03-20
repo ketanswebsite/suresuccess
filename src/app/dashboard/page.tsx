@@ -33,7 +33,7 @@ const topicProgress = [
 const statCards = [
   { icon: Target, label: "Avg Score", value: "78%", sub: "+3% this week", subColor: "text-success-600" },
   { icon: BookOpen, label: "Questions Done", value: "342", sub: "75 this week", subColor: "text-success-600" },
-  { icon: Flame, label: "Day Streak", value: "7", sub: "Keep it going!", subColor: "text-gold-600", glow: true },
+  { icon: Flame, label: "Day Streak", value: "7", sub: "Keep it going!", subColor: "text-gold-700", glow: true },
   { icon: Clock, label: "Study Time", value: "14h", sub: "This month", subColor: "text-text-tertiary" },
 ];
 
@@ -142,7 +142,7 @@ export default function DashboardPage() {
                       passed
                         ? "bg-success-50 text-success-600"
                         : mid
-                        ? "bg-warning-50 text-warning-600"
+                        ? "bg-warning-50 text-warning-700"
                         : "bg-danger-50 text-danger-600"
                     }`}
                   >
