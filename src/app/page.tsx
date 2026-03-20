@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -88,7 +88,64 @@ const testimonials = [
   },
 ];
 
+const heroPhrases = [
+  "with confidence",
+  "first time",
+  "stress-free",
+  "on your terms",
+];
+
+function useTypingAnimation(phrases: string[], typingSpeed = 80, deletingSpeed = 50, pauseMs = 2000) {
+  const [displayed, setDisplayed] = useState(phrases[0]);
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(phrases[0].length);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const tick = useCallback(() => {
+    const current = phrases[phraseIndex];
+
+    if (!isDeleting) {
+      // Typing
+      if (charIndex < current.length) {
+        setDisplayed(current.slice(0, charIndex + 1));
+        setCharIndex((c) => c + 1);
+      }
+    } else {
+      // Deleting
+      if (charIndex > 0) {
+        setDisplayed(current.slice(0, charIndex - 1));
+        setCharIndex((c) => c - 1);
+      }
+    }
+  }, [phrases, phraseIndex, charIndex, isDeleting]);
+
+  useEffect(() => {
+    const current = phrases[phraseIndex];
+
+    if (!isDeleting && charIndex === current.length) {
+      // Finished typing — pause then start deleting
+      const timeout = setTimeout(() => setIsDeleting(true), pauseMs);
+      return () => clearTimeout(timeout);
+    }
+
+    if (isDeleting && charIndex === 0) {
+      // Finished deleting — move to next phrase
+      setIsDeleting(false);
+      setPhraseIndex((i) => (i + 1) % phrases.length);
+      return;
+    }
+
+    const speed = isDeleting ? deletingSpeed : typingSpeed;
+    const timeout = setTimeout(tick, speed);
+    return () => clearTimeout(timeout);
+  }, [tick, phrases, phraseIndex, charIndex, isDeleting, typingSpeed, deletingSpeed, pauseMs]);
+
+  return displayed;
+}
+
 export default function Home() {
+  const typedText = useTypingAnimation(heroPhrases);
+
   // Scroll-triggered reveal animation
   useEffect(() => {
     // Mark document as JS-ready so reveal animations activate
@@ -132,7 +189,11 @@ export default function Home() {
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
               Pass your financial exams{" "}
-              <span className="text-gold-400">with confidence</span>
+              <span className="text-gold-400">
+                {typedText}
+                <span className="typing-cursor" aria-hidden="true" />
+              </span>
+              <span className="sr-only">with confidence, first time, stress-free, on your terms</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-navy-300 mb-10 leading-relaxed max-w-2xl mx-auto">
