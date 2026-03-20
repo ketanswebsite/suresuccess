@@ -6,10 +6,12 @@ import { useState } from "react";
 import { CHAPTER_CONFIG, getQuestionsByModule } from "@/lib/question-bank";
 
 // Build exam list from real data
-const icwimQuestions = getQuestionsByModule("cisi-icwim");
-const icwimChapters = Object.entries(CHAPTER_CONFIG).filter(
-  ([, cfg]) => cfg.moduleId === "cisi-icwim"
-);
+const regQuestions = getQuestionsByModule("cisi-reg");
+const regChapters = Object.entries(CHAPTER_CONFIG).filter(([, cfg]) => cfg.moduleId === "cisi-reg");
+const irtQuestions = getQuestionsByModule("cisi-icwim");
+const irtChapters = Object.entries(CHAPTER_CONFIG).filter(([, cfg]) => cfg.moduleId === "cisi-icwim");
+const fpaQuestions = getQuestionsByModule("cisi-fpa");
+const fpaChapters = Object.entries(CHAPTER_CONFIG).filter(([, cfg]) => cfg.moduleId === "cisi-fpa");
 
 const exams: {
   id: string;
@@ -23,14 +25,36 @@ const exams: {
   available: boolean;
 }[] = [
   {
+    id: "cisi-reg",
+    body: "CISI",
+    name: "UK Regulation & Professional Integrity",
+    code: "Module 1 — Regulation",
+    questions: regQuestions.length,
+    duration: "120 mins",
+    chapters: regChapters.length,
+    difficulty: "IAD",
+    available: true,
+  },
+  {
     id: "cisi-icwim",
     body: "CISI",
-    name: "Investment, Risk & Taxation (ICWIM)",
-    code: "ICWIM",
-    questions: icwimQuestions.length,
+    name: "Investment, Risk & Taxation",
+    code: "Module 2 — IRT",
+    questions: irtQuestions.length,
     duration: "120 mins",
-    chapters: icwimChapters.length,
-    difficulty: "Intermediate",
+    chapters: irtChapters.length,
+    difficulty: "IAD",
+    available: true,
+  },
+  {
+    id: "cisi-fpa",
+    body: "CISI",
+    name: "Financial Planning & Advice",
+    code: "Module 3 — FPA",
+    questions: fpaQuestions.length,
+    duration: "120 mins",
+    chapters: fpaChapters.length,
+    difficulty: "IAD",
     available: true,
   },
   {
@@ -42,17 +66,6 @@ const exams: {
     duration: "60 mins",
     chapters: 0,
     difficulty: "Foundation",
-    available: false,
-  },
-  {
-    id: "cisi-iad",
-    body: "CISI",
-    name: "Investment Advice Diploma (IAD)",
-    code: "IAD",
-    questions: 0,
-    duration: "120 mins",
-    chapters: 0,
-    difficulty: "Advanced",
     available: false,
   },
   {
@@ -130,7 +143,7 @@ export default function ExamsPage() {
         <div className="section-divider mb-4" />
         <h1 className="text-3xl font-bold text-text-primary mb-2 leading-tight">Exam modules</h1>
         <p className="text-base text-text-secondary leading-relaxed">
-          Choose your exam to start practising. More modules coming soon.
+          CISI Investment Advice Diploma (IAD) — all 3 exam papers available. More qualifications coming soon.
         </p>
       </div>
 

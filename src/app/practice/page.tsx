@@ -166,7 +166,10 @@ export default function PracticePage() {
   // ─── Setup state ───
   const [phase, setPhase] = useState<QuizPhase>("setup");
   const [mode, setMode] = useState<QuizMode>("practice");
-  const [selectedModule, setSelectedModule] = useState("cisi-reg");
+  const examParam = searchParams.get("exam");
+  const [selectedModule, setSelectedModule] = useState(
+    examParam && ["cisi-reg", "cisi-icwim", "cisi-fpa"].includes(examParam) ? examParam : "cisi-reg"
+  );
   const [chapterFilter, setChapterFilter] = useState<string | null>(null);
   const [questionCount, setQuestionCount] = useState(80);
 
