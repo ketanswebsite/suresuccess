@@ -24,13 +24,14 @@ export default function LoginPage() {
     try {
       await login(email, password);
       router.push("/dashboard");
-    } catch (err: any) {
-      if (err.code === "auth/invalid-credential") {
-        setError("Invalid email or password.");
-      } else if (err.code === "auth/too-many-requests") {
-        setError("Too many attempts. Please try again later.");
+    } catch (err: unknown) {
+      const code = (err as { code?: string }).code;
+      if (code === "auth/invalid-credential") {
+        setError("That email and password combination doesn't match our records. Please check and try again.");
+      } else if (code === "auth/too-many-requests") {
+        setError("Too many sign-in attempts. Please wait a few minutes before trying again.");
       } else {
-        setError("Something went wrong. Please try again.");
+        setError("Something went wrong on our end. Please try again in a moment.");
       }
     } finally {
       setLoading(false);
@@ -39,7 +40,7 @@ export default function LoginPage() {
 
   const handleReset = async () => {
     if (!email) {
-      setError("Enter your email address first.");
+      setError("Enter your email address above, then click 'Forgot password?' again.");
       return;
     }
     try {
@@ -47,7 +48,7 @@ export default function LoginPage() {
       setResetSent(true);
       setError("");
     } catch {
-      setError("Could not send reset email. Check the address and try again.");
+      setError("We couldn't send a reset email to that address. Please check it and try again.");
     }
   };
 
@@ -55,60 +56,69 @@ export default function LoginPage() {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <GraduationCap className="w-7 h-7 text-white" />
+          <div className="w-14 h-14 rounded-2xl bg-navy-900 flex items-center justify-center mx-auto mb-4">
+            <GraduationCap className="w-7 h-7 text-gold-400" aria-hidden="true" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Welcome back</h1>
-          <p className="text-slate-500 mt-1">Sign in to continue your exam prep</p>
+          <h1 className="text-2xl font-bold text-text-primary">Welcome back</h1>
+          <p className="text-text-secondary mt-1">Sign in to continue your exam preparation</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div className="card p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg border border-red-100">
+              <div role="alert" aria-live="assertive" className="bg-danger-50 text-danger-600 text-sm px-4 py-3 rounded-lg border border-danger-500/20">
                 {error}
               </div>
             )}
 
             {resetSent && (
-              <div className="bg-green-50 text-green-700 text-sm px-4 py-3 rounded-lg border border-green-100">
-                Password reset email sent. Check your inbox.
+              <div role="status" aria-live="polite" className="bg-success-50 text-success-600 text-sm px-4 py-3 rounded-lg border border-success-500/20">
+                Password reset email sent — check your inbox and spam folder.
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+              <label htmlFor="login-email" className="block text-sm font-medium text-text-primary mb-1.5">
+                Email address
+              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
                 <input
+                  id="login-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input pl-10"
                   placeholder="you@example.com"
                   required
+                  autoComplete="email"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+              <label htmlFor="login-password" className="block text-sm font-medium text-text-primary mb-1.5">
+                Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
                 <input
+                  id="login-password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Your password"
+                  className="input pl-10 pr-10"
+                  placeholder="Enter your password"
                   required
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary transition-colors p-0.5"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
                 </button>
               </div>
             </div>
@@ -117,7 +127,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-sm text-navy-600 hover:text-navy-800 font-medium transition-colors"
               >
                 Forgot password?
               </button>
@@ -126,17 +136,17 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 text-white font-semibold rounded-lg btn-primary flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-2.5 font-semibold rounded-lg btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              {loading ? "Signing in..." : "Sign In"}
+              {loading && <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />}
+              {loading ? "Signing in\u2026" : "Sign in"}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="text-center text-sm text-text-secondary mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-blue-600 font-medium hover:text-blue-800">
+          <Link href="/register" className="text-navy-600 font-semibold hover:text-navy-800 transition-colors">
             Create one free
           </Link>
         </p>

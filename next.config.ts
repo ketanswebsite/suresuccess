@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  turbopack: {
+    root: process.cwd(),
+  },
+  serverExternalPackages: ["firebase", "@firebase/auth", "@firebase/util"],
 };
 
 export default nextConfig;

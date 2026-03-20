@@ -21,7 +21,7 @@ export default function RegisterPage() {
     setError("");
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      setError("Your password needs to be at least 6 characters long.");
       return;
     }
 
@@ -29,11 +29,12 @@ export default function RegisterPage() {
     try {
       await register(email, password, name);
       router.push("/dashboard");
-    } catch (err: any) {
-      if (err.code === "auth/email-already-in-use") {
-        setError("An account with this email already exists.");
+    } catch (err: unknown) {
+      const code = (err as { code?: string }).code;
+      if (code === "auth/email-already-in-use") {
+        setError("An account with this email already exists. Try signing in instead.");
       } else {
-        setError("Something went wrong. Please try again.");
+        setError("Something went wrong on our end. Please try again in a moment.");
       }
     } finally {
       setLoading(false);
@@ -44,69 +45,82 @@ export default function RegisterPage() {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <GraduationCap className="w-7 h-7 text-white" />
+          <div className="w-14 h-14 rounded-2xl bg-navy-900 flex items-center justify-center mx-auto mb-4">
+            <GraduationCap className="w-7 h-7 text-gold-400" aria-hidden="true" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Create your account</h1>
-          <p className="text-slate-500 mt-1">Start your exam prep journey today</p>
+          <h1 className="text-2xl font-bold text-text-primary">Create your account</h1>
+          <p className="text-text-secondary mt-1">Start preparing for your exam today</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div className="card p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg border border-red-100">
+              <div role="alert" aria-live="assertive" className="bg-danger-50 text-danger-600 text-sm px-4 py-3 rounded-lg border border-danger-500/20">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Full Name</label>
+              <label htmlFor="register-name" className="block text-sm font-medium text-text-primary mb-1.5">
+                Full name
+              </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
                 <input
+                  id="register-name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input pl-10"
                   placeholder="Your full name"
                   required
+                  autoComplete="name"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+              <label htmlFor="register-email" className="block text-sm font-medium text-text-primary mb-1.5">
+                Email address
+              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
                 <input
+                  id="register-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input pl-10"
                   placeholder="you@example.com"
                   required
+                  autoComplete="email"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+              <label htmlFor="register-password" className="block text-sm font-medium text-text-primary mb-1.5">
+                Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
                 <input
+                  id="register-password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Minimum 6 characters"
+                  className="input pl-10 pr-10"
+                  placeholder="At least 6 characters"
                   required
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary transition-colors p-0.5"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
                 </button>
               </div>
             </div>
@@ -114,26 +128,30 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 text-white font-semibold rounded-lg btn-primary flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-2.5 font-semibold rounded-lg btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              {loading ? "Creating account..." : "Create Account"}
+              {loading && <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />}
+              {loading ? "Creating your account\u2026" : "Create account"}
             </button>
           </form>
 
-          <div className="mt-5 space-y-2">
-            {["Free to get started", "Access to practice questions", "Track your progress"].map((item) => (
-              <div key={item} className="flex items-center gap-2 text-sm text-slate-600">
-                <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+          <div className="mt-6 pt-5 border-t border-border-light space-y-2.5">
+            {[
+              "7-day free trial with full access",
+              "5,000+ practice questions across 15+ modules",
+              "Cancel anytime — no commitment",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-2.5 text-sm text-text-secondary">
+                <CheckCircle2 className="w-4 h-4 text-success-500 flex-shrink-0" aria-hidden="true" />
                 {item}
               </div>
             ))}
           </div>
         </div>
 
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="text-center text-sm text-text-secondary mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-blue-600 font-medium hover:text-blue-800">
+          <Link href="/login" className="text-navy-600 font-semibold hover:text-navy-800 transition-colors">
             Sign in
           </Link>
         </p>

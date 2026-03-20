@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Clock, FileText, ArrowRight, Search } from "lucide-react";
+import { BookOpen, Clock, FileText, Search } from "lucide-react";
 import { useState } from "react";
 
 const exams = [
@@ -14,7 +14,6 @@ const exams = [
     duration: "60 mins",
     topics: 8,
     difficulty: "Foundation",
-    color: "blue",
   },
   {
     id: "cisi-icwim",
@@ -25,7 +24,6 @@ const exams = [
     duration: "120 mins",
     topics: 10,
     difficulty: "Intermediate",
-    color: "blue",
   },
   {
     id: "cisi-iad",
@@ -36,7 +34,6 @@ const exams = [
     duration: "120 mins",
     topics: 12,
     difficulty: "Advanced",
-    color: "blue",
   },
   {
     id: "cii-r01",
@@ -47,7 +44,6 @@ const exams = [
     duration: "60 mins",
     topics: 7,
     difficulty: "Foundation",
-    color: "emerald",
   },
   {
     id: "cii-r02",
@@ -58,7 +54,6 @@ const exams = [
     duration: "60 mins",
     topics: 8,
     difficulty: "Foundation",
-    color: "emerald",
   },
   {
     id: "cii-r05",
@@ -69,7 +64,6 @@ const exams = [
     duration: "60 mins",
     topics: 6,
     difficulty: "Foundation",
-    color: "emerald",
   },
   {
     id: "cii-af1",
@@ -80,7 +74,6 @@ const exams = [
     duration: "180 mins",
     topics: 9,
     difficulty: "Advanced",
-    color: "emerald",
   },
   {
     id: "cii-af5",
@@ -91,7 +84,6 @@ const exams = [
     duration: "180 mins",
     topics: 8,
     difficulty: "Advanced",
-    color: "emerald",
   },
 ];
 
@@ -110,92 +102,94 @@ export default function ExamsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-10">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Exam Modules</h1>
-        <p className="text-slate-600">Choose an exam to start practising. All modules are updated for 2026 syllabuses.</p>
+        <div className="section-divider mb-4" />
+        <h1 className="text-3xl font-bold text-text-primary mb-2">Exam modules</h1>
+        <p className="text-text-secondary">
+          Choose your exam to start practising. All question banks are updated for 2026 syllabuses.
+        </p>
       </div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search exams..."
-            className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search by exam name or code\u2026"
+            aria-label="Search exams by name or code"
+            className="input pl-10"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2" role="group" aria-label="Filter by exam body">
           {(["all", "CISI", "CII"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              aria-pressed={filter === f}
+              className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 filter === f
-                  ? "bg-blue-600 text-white"
-                  : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                  ? "bg-navy-800 text-white"
+                  : "bg-white border border-border text-text-secondary hover:bg-surface-sunken"
               }`}
             >
-              {f === "all" ? "All" : f}
+              {f === "all" ? "All exams" : f}
             </button>
           ))}
         </div>
       </div>
 
       {/* Exam grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((exam) => (
-          <div
+          <Link
             key={exam.id}
-            className="card-hover bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
+            href={`/practice?exam=${exam.id}`}
+            className="card-interactive overflow-hidden block group"
           >
-            <div className={`h-1.5 ${exam.body === "CISI" ? "bg-blue-500" : "bg-emerald-500"}`} />
+            <div className={`h-1 ${exam.body === "CISI" ? "bg-navy-500" : "bg-gold-500"}`} />
             <div className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                    exam.body === "CISI"
-                      ? "bg-blue-50 text-blue-700"
-                      : "bg-emerald-50 text-emerald-700"
+                  className={`badge ${
+                    exam.body === "CISI" ? "badge-navy" : "badge-gold"
                   }`}
                 >
                   {exam.body}
                 </span>
-                <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                <span className="badge bg-surface-sunken text-text-secondary">
                   {exam.difficulty}
                 </span>
               </div>
 
-              <h3 className="font-bold text-slate-900 mb-1">{exam.code}</h3>
-              <p className="text-sm text-slate-600 mb-4">{exam.name}</p>
+              <h3 className="font-bold text-text-primary mb-1 text-lg">{exam.code}</h3>
+              <p className="text-sm text-text-secondary mb-4 leading-relaxed">{exam.name}</p>
 
-              <div className="flex gap-4 text-xs text-slate-500 mb-5">
+              <div className="flex gap-4 text-xs text-text-tertiary mb-5">
                 <span className="flex items-center gap-1">
-                  <FileText className="w-3.5 h-3.5" /> {exam.questions} Qs
+                  <FileText className="w-3.5 h-3.5" aria-hidden="true" /> {exam.questions} questions
                 </span>
                 <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5" /> {exam.duration}
+                  <Clock className="w-3.5 h-3.5" aria-hidden="true" /> {exam.duration}
                 </span>
                 <span className="flex items-center gap-1">
-                  <BookOpen className="w-3.5 h-3.5" /> {exam.topics} topics
+                  <BookOpen className="w-3.5 h-3.5" aria-hidden="true" /> {exam.topics} topics
                 </span>
               </div>
 
-              <Link
-                href={`/practice?exam=${exam.id}`}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800"
-              >
-                Start Practising <ArrowRight className="w-4 h-4" />
-              </Link>
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-600 group-hover:text-navy-800 transition-colors">
+                Start practising <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">&rarr;</span>
+              </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
       {filtered.length === 0 && (
-        <div className="text-center py-16">
-          <p className="text-slate-500">No exams found matching your search.</p>
+        <div className="text-center py-20">
+          <p className="text-text-tertiary text-lg">No exams match your search.</p>
+          <p className="text-text-tertiary text-sm mt-1">Try a different search term or clear your filters.</p>
         </div>
       )}
     </div>
