@@ -34,7 +34,9 @@ interface ManagedQuestion {
 
 const MODULES = [
   { id: "cisi-ioc", body: "CISI", name: "Introduction to Securities & Investment (IOC)" },
+  { id: "cisi-reg", body: "CISI", name: "UK Regulation & Professional Integrity (REG)" },
   { id: "cisi-icwim", body: "CISI", name: "Investment, Risk & Taxation (ICWIM)" },
+  { id: "cisi-fpa", body: "CISI", name: "Financial Planning & Advice (FPA)" },
   { id: "cisi-iad", body: "CISI", name: "Investment Advice Diploma (IAD)" },
   { id: "cii-r01", body: "CII", name: "Financial Services, Regulation & Ethics (R01)" },
   { id: "cii-r02", body: "CII", name: "Investment Principles & Risk (R02)" },
